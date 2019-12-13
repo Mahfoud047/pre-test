@@ -86,6 +86,8 @@ public class CustomerAccountTest {
     }
 
 
+
+
     /**
      * Tests that an illegal withdrawal throws the expected exception.
      */
@@ -95,7 +97,7 @@ public class CustomerAccountTest {
         //expect
         thrown.expect(IllegalBalanceException.class);
 
-        final Double amount = 200.0;  // 200.0 > 100.0
+        final Double amount = 900.0;
 
         //test
         customerAccount.withdrawAndReportBalance(amount, rule);
@@ -108,20 +110,20 @@ public class CustomerAccountTest {
     @Test
     public void testLegalWithdraw() throws IllegalBalanceException {
 
-        final Double amount = 50.0;
-
         final Double balanceBefore = customerAccount.getBalance();
+
+        final Double amount = balanceBefore / 2;
 
         final Double expectedBalance = balanceBefore - amount;
 
-        customerAccount.withdrawAndReportBalance(amount, rule); // 100.0 - 50.0 == 50.0
+        customerAccount.withdrawAndReportBalance(amount, rule); // withdraw balance / 2
 
         final Double balanceAfter = customerAccount.getBalance();
 
         // test case of expectedBalance > 0
         assertEquals(expectedBalance, balanceAfter);
 
-        customerAccount.withdrawAndReportBalance(amount, rule); // 50.0 - 50.0 == 0.0
+        customerAccount.withdrawAndReportBalance(amount, rule); //  withdraw balance / 2
 
         // test case of expectedBalance == 0 (empty account)
         assertEquals(expectedBalance, balanceAfter);

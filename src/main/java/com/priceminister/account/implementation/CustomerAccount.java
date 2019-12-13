@@ -9,10 +9,12 @@ public class CustomerAccount implements Account {
 
     public void add(Double addedAmount) throws IllegalArgumentException {
 
-        if (addedAmount < 0.0)
+        if (addedAmount < 0.0) {
             throw new IllegalArgumentException("illegal amount " + addedAmount.toString());
 
-        balance += addedAmount;
+        } else {
+            balance += addedAmount;
+        }
 
     }
 
