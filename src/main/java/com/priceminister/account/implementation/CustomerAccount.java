@@ -5,36 +5,45 @@ import com.priceminister.account.*;
 
 public class CustomerAccount implements Account {
 
-    private double balance = 0.0;
+    private double balance;
+
+    public CustomerAccount() {
+        this.balance = 0.0;
+    }
+
+    public CustomerAccount(Double initBalance) {
+        this.balance = initBalance;
+    }
+
 
     public void add(Double addedAmount) throws IllegalArgumentException {
 
         if (addedAmount < 0.0) {
             throw new IllegalArgumentException("illegal amount " + addedAmount.toString());
-
-        } else {
-            balance += addedAmount;
         }
+
+        this.balance += addedAmount;
 
     }
 
     public Double getBalance() {
 
-        return balance;
+        return this.balance;
 
     }
 
     public Double withdrawAndReportBalance(Double withdrawnAmount, AccountRule rule)
             throws IllegalBalanceException {
 
-        final Double resultingAccountBalance = balance - withdrawnAmount;
+        final Double resultingAccountBalance = this.balance - withdrawnAmount;
 
-        if (!rule.withdrawPermitted(resultingAccountBalance))
+        if (!rule.withdrawPermitted(resultingAccountBalance)) {
             throw new IllegalBalanceException(resultingAccountBalance);
+        }
 
-        balance = resultingAccountBalance;
+        this.balance = resultingAccountBalance;
 
-        return balance;
+        return this.balance;
     }
 
 }

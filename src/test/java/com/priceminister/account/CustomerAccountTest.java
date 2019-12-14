@@ -28,7 +28,7 @@ public class CustomerAccountTest {
      */
     @Before
     public void setUp() throws Exception {
-        customerAccount = new CustomerAccount();
+        customerAccount = new CustomerAccount(100.0);
         rule = new CustomerAccountRule();
     }
 
@@ -37,6 +37,7 @@ public class CustomerAccountTest {
      */
     @Test
     public void testAccountWithoutMoneyHasZeroBalance() {
+        customerAccount = new CustomerAccount();  // init the account
         final Double balance = customerAccount.getBalance();
         assertEquals((Double) 0.0, balance);
     }
@@ -61,17 +62,11 @@ public class CustomerAccountTest {
     }
 
 
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
-
     /**
      * Adds negative amount to the account and expect IllegalArgumentException.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testAddNegativeAmountReportIllegalArgument() {
-
-        //expect
-        thrown.expect(IllegalArgumentException.class);
 
         final Double amount = -100.0;
 
@@ -86,47 +81,54 @@ public class CustomerAccountTest {
     }
 
 
-
-
     /**
      * Tests that an illegal withdrawal throws the expected exception.
      */
-    @Test
+    @Test(expected = IllegalBalanceException.class)
     public void testWithdrawAndReportBalanceIllegalBalance() throws IllegalBalanceException {
 
-        //expect
-        thrown.expect(IllegalBalanceException.class);
+        final Double amount = 200.0;  // 200.0 > 100.0
 
-        final Double amount = 900.0;
-
-        //test
         customerAccount.withdrawAndReportBalance(amount, rule);
 
     }
 
     /**
-     * Tests that a legal withdrawal works as expected
+     * Tests that a legal withdrawal smaller then the whole balance works as expected
      */
     @Test
-    public void testLegalWithdraw() throws IllegalBalanceException {
+    public void testLegalWithdrawSmallerThenBalance() throws IllegalBalanceException {
 
         final Double balanceBefore = customerAccount.getBalance();
 
-        final Double amount = balanceBefore / 2;
+        final Double amount = 50.0;  // 50.0 < 100.0
 
         final Double expectedBalance = balanceBefore - amount;
 
-        customerAccount.withdrawAndReportBalance(amount, rule); // withdraw balance / 2
+        customerAccount.withdrawAndReportBalance(amount, rule); // withdraw: balance / 2
 
         final Double balanceAfter = customerAccount.getBalance();
 
         // test case of expectedBalance > 0
         assertEquals(expectedBalance, balanceAfter);
 
-        customerAccount.withdrawAndReportBalance(amount, rule); //  withdraw balance / 2
+    }
+
+
+    /**
+     * Tests that a legal withdrawal all balance works as expected
+     */
+    @Test
+    public void testLegalWithdrawEqualToBalance() throws IllegalBalanceException {
+
+        final Double amount = 100.0;
+
+        customerAccount.withdrawAndReportBalance(amount, rule); // withdraw all balance
+
+        final Double balanceAfter = customerAccount.getBalance();
 
         // test case of expectedBalance == 0 (empty account)
-        assertEquals(expectedBalance, balanceAfter);
+        assertEquals((Double) 0.0, balanceAfter);
 
     }
 
